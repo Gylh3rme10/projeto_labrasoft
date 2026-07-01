@@ -8,27 +8,29 @@ using WebApplication1.Models;
 
 namespace WebApplication1
 {
-    public partial class cadastroBolsista : System.Web.UI.Page
+    public partial class CadastroBolsista : System.Web.UI.Page
     {
-        protected void btnSalvar_click(object sender, EventArgs e)
+        protected void BtnSalvar_Click(object sender, EventArgs e)
         {
+            
             try
             {
-                Bolsista aluno = new Bolsista();
-                aluno.Nome = txtNome.Text;
-                aluno.CPF = txtCPF.Text;
-                aluno.Matricula = txtMatricula.Text;
-                aluno.DataNascimento = DateTime.Parse(txtDataNascimento.Text);
-                string Resumo = aluno.ObterResumo();
-                int Idade = aluno.CalcularIdade();
+                Bolsista novoAluno = new Bolsista();
 
-                lblMensagem.Text = $"Sucesso! {Resumo} Idade: {Idade} anos";
-                lblMensagem.ForeColor = System.Drawing.Color.DarkBlue;
+                novoAluno.Nome = txtNome.Text;
+                novoAluno.CPF = txtCpf.Text;
+                novoAluno.DataNascimento = DateTime.Parse(dateBirth.Text);
+                novoAluno.Matricula = txtMatricula.Text;
+                
+                string resumo = novoAluno.ObterResumo();
+                int idadeAluno = novoAluno.CalcularIdade();
 
-            }
-            catch (Exception)
+                lblMensagem.Text = $"Cadastro concluído: {resumo}";
+                lblMensagem.ForeColor = System.Drawing.Color.Green;
+
+            } catch (Exception ex) 
             {
-                lblMensagem.Text = "Erro";
+                lblMensagem.Text = "Cadastro falhou";
                 lblMensagem.ForeColor = System.Drawing.Color.Red;
             }
         }
