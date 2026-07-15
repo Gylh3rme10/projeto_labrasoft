@@ -69,6 +69,8 @@
   <ItemGroup>
     <Content Include="BolsistaExemplo.aspx" />
     <Content Include="cadastroBolsista.aspx" />
+    <Content Include="CadastroCoordenadores.aspx" />
+    <Content Include="CadastroProjeto.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web\Formulario.html" />
   </ItemGroup>
@@ -87,8 +89,25 @@
     <Compile Include="cadastroBolsista.aspx.designer.cs">
       <DependentUpon>cadastroBolsista.aspx</DependentUpon>
     </Compile>
+    <Compile Include="CadastroCoordenadores.aspx.cs">
+      <DependentUpon>CadastroCoordenadores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CadastroCoordenadores.aspx.designer.cs">
+      <DependentUpon>CadastroCoordenadores.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroProjeto.aspx.cs">
+      <DependentUpon>CadastroProjeto.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CadastroProjeto.aspx.designer.cs">
+      <DependentUpon>CadastroProjeto.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Coordenadores.cs" />
     <Compile Include="Models\Bolsista.cs" />
+    <Compile Include="Models\Projeto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\Repositorio.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

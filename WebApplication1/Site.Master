@@ -51,6 +51,21 @@
                             Bolsista Exemplo
                         </asp:HyperLink>
 
+                         <asp:HyperLink
+                             ID="hlCadCoord"
+                             runat="server"
+                             NavigateUrl="~/CadastroCoordenadores.aspx"
+                             CssClass="nav-link">
+                             Cadastro de Coordenadores
+                         </asp:HyperLink>
+
+                         <asp:HyperLink
+                             ID="HyperLink1"
+                             runat="server"
+                             NavigateUrl="~/CadastroProjeto.aspx"
+                             CssClass="nav-link">
+                             Projetos
+                         </asp:HyperLink>
                     </div>
                 </div>
 
