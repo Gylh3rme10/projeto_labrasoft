@@ -21,7 +21,7 @@ namespace WebApplication1
                 ddlCoordenador.DataValueField = "CPF";
                 ddlCoordenador.DataBind();
 
-                lstBolsistas.DataSource = Repositorio.Bolsistas;
+                lstBolsistas.DataSource = Repositorio.ListarBolsistas();
                 lstBolsistas.DataTextField = "Nome";   // O que aparece na lista
                 lstBolsistas.DataValueField = "CPF";   // Valor associado ao item
                 lstBolsistas.DataBind();
@@ -72,7 +72,7 @@ namespace WebApplication1
                 {
                     if (item.Selected)
                     {
-                        Bolsista bolsista = Repositorio.Bolsistas
+                        Bolsista bolsista = Repositorio.ListarBolsistas()
                             .FirstOrDefault(b => b.CPF == item.Value);
 
                         if (bolsista != null)
@@ -110,10 +110,19 @@ namespace WebApplication1
 
                 StringBuilder sb = new StringBuilder();
 
-                sb.Append("<b>Coordenador:</b> ");
-                sb.Append(projeto.Coordenadores.Nome);
-                sb.Append("<br/><b>Bolsistas:</b><br/>");
+                sb.Append("<b>Título:</b> ");
+                sb.Append(projeto.Titulo);
 
+                sb.Append("<br/><b>Área de Conhecimento:</b> ");
+                sb.Append(projeto.areaConhecimento);
+
+                sb.Append("<br/><b>Verba:</b> ");
+                sb.Append(projeto.Verba.ToString("C"));
+
+                sb.Append("<br/><b>Coordenador:</b> ");
+                sb.Append(projeto.Coordenadores.Nome);
+
+                sb.Append("<br/><b>Bolsistas:</b><br/>");
                 foreach (Bolsista b in projeto.Bolsistas)
                 {
                     sb.Append("- " + b.Nome + "<br/>");
@@ -122,6 +131,10 @@ namespace WebApplication1
                 lblDetalhes.Text = sb.ToString();
                 pnlDetalhes.Visible = true;
             }
+        }
+        protected void btnFecharDetalhes_Click(object sender, EventArgs e)
+        {
+            pnlDetalhes.Visible = false;
         }
         private void AtualizarGrid()
         {

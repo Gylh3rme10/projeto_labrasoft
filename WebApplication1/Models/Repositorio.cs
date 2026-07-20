@@ -1,53 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace WebApplication1.Models
 {
     public static class Repositorio
     {
-        public static List<Bolsista> Bolsistas { get; } = new List<Bolsista>
+        private static string strConexao = ConfigurationManager.ConnectionStrings["Banco"].ConnectionString;
+        public static string TestarConexao()
         {
-            new Bolsista
+            try
             {
-                Nome = "João Silva",
-                CPF = "111.111.111-11",
-                Matricula = "2024001",
-                DataNascimento = new DateTime(2002, 5, 15),
-                Sexo = "M"
-            },
-            new Bolsista
-            {
-                Nome = "Maria Oliveira",
-                CPF = "222.222.222-22",
-                Matricula = "2024002",
-                DataNascimento = new DateTime(2001, 8, 20),
-                Sexo = "F"
-            },
-            new Bolsista
-            {
-                Nome = "Pedro Santos",
-                CPF = "333.333.333-33",
-                Matricula = "2024003",
-                DataNascimento = new DateTime(2003, 2, 10),
-                Sexo = "M"
-            },
-            new Bolsista
-            {
-                Nome = "Ana Costa",
-                CPF = "444.444.444-44",
-                Matricula = "2024004",
-                DataNascimento = new DateTime(2000, 11, 30),
-                Sexo = "F"
-            },
-            new Bolsista
-            {
-                Nome = "Lucas Almeida",
-                CPF = "555.555.555-55",
-                Matricula = "2024005",
-                DataNascimento = new DateTime(2002, 7, 5),
-                Sexo = "M"
+                using (SqlConnection conexao = new SqlConnection(strConexao))
+                conexao.Open();
+                return "Conexão realizada com sucesso";
             }
-        };
+            catch (Exception ex)
+            {
+                return "Erro ao conectar: " + ex.Message;
+            }
+        }
+        public static void InserirBolsista(Bolsista b)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"INSERT INTO Bolsista
+                       (Nome, CPF, Matricula, DataNascimento, Sexo)
+                       VALUES
+                       (@Nome,@CPF,@Matricula,@DataNascimento,@Sexo)";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@Nome", b.Nome);
+                cmd.Parameters.AddWithValue("@CPF", b.CPF);
+                cmd.Parameters.AddWithValue("@Matricula", b.Matricula);
+                cmd.Parameters.AddWithValue("@DataNascimento", b.DataNascimento);
+                cmd.Parameters.AddWithValue("@Sexo", b.Sexo);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public static List<Bolsista> ListarBolsistas()
+        {
+            List<Bolsista> lista = new List<Bolsista>();
+
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = "SELECT * FROM Bolsista";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    Bolsista b = new Bolsista
+                    {
+                        Nome = dr["Nome"].ToString(),
+                        CPF = dr["CPF"].ToString(),
+                        Matricula = dr["Matricula"].ToString(),
+                        DataNascimento = Convert.ToDateTime(dr["DataNascimento"]),
+                        Sexo = dr["Sexo"].ToString()
+                    };
+
+                    lista.Add(b);
+                }
+            }
+
+            return lista;
+        }
+        public static bool BolsistaExiste(string cpf)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = "SELECT COUNT(*) FROM Bolsista WHERE CPF = @CPF";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+                cmd.Parameters.AddWithValue("@CPF", cpf);
+
+                int quantidade = (int)cmd.ExecuteScalar();
+
+                return quantidade > 0;
+            }
+        }
+        public static void TestarPreencherBanco()
+        {
+            foreach (Bolsista b in ListarBolsistas())
+            {
+                if (!BolsistaExiste(b.CPF))
+                {
+                    InserirBolsista(b);
+                }
+            }
+        }
 
         public static List<Coordenador> Coordenadores { get; } = new List<Coordenador>
         {

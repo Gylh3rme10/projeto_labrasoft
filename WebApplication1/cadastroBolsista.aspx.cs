@@ -32,13 +32,6 @@ namespace WebApplication1
                 return;
             }
 
-            if (Repositorio.Bolsistas.Any(b => b.CPF == txtCpf.Text))
-            {
-                lblMensagem.Text = "Já existe um bolsista cadastrado com esse CPF.";
-                lblMensagem.ForeColor = System.Drawing.Color.Red;
-                return;
-            }
-
             try
             {
                 Bolsista novoAluno = new Bolsista();
@@ -52,7 +45,7 @@ namespace WebApplication1
                 string resumo = novoAluno.ObterResumo();
                 int idadeAluno = novoAluno.CalcularIdade();
 
-                Repositorio.Bolsistas.Add(novoAluno);
+                Repositorio.InserirBolsista(novoAluno);
 
                 Response.Redirect("CadastroBolsista.aspx");
 
@@ -70,9 +63,9 @@ namespace WebApplication1
         }
         private void AtualizarGrid()
         {
-            if (Repositorio.Bolsistas.Count > 0)
+            if (Repositorio.ListarBolsistas().Count > 0)
             {
-                gvBolsistas.DataSource = Repositorio.Bolsistas;
+                gvBolsistas.DataSource = Repositorio.ListarBolsistas();
                 gvBolsistas.DataBind();
                 gvBolsistas.Visible = true;
                 BtnFiltrarMulheres.Visible = true;
@@ -104,7 +97,7 @@ namespace WebApplication1
         protected void FiltrarMulheres(object sender, EventArgs e)
         {
             string sexo = ddlSexo.SelectedValue;
-            gvBolsistas.DataSource = Repositorio.Bolsistas
+            gvBolsistas.DataSource = Repositorio.ListarBolsistas()
                 .Where(b => b.Sexo == "F")
                 .ToList();
             gvBolsistas.DataBind();
@@ -113,7 +106,7 @@ namespace WebApplication1
         }
         protected void OrdenarPorNome(object sender, EventArgs e)
         {
-            gvBolsistas.DataSource = Repositorio.Bolsistas
+            gvBolsistas.DataSource = Repositorio.ListarBolsistas()
                .OrderBy(b => b.Nome)
                 .ToList();
             gvBolsistas.DataBind();
@@ -123,7 +116,7 @@ namespace WebApplication1
         }
         protected void MostrarTodos(object sender, EventArgs e)
         {
-            gvBolsistas.DataSource = Repositorio.Bolsistas;
+            gvBolsistas.DataSource = Repositorio.ListarBolsistas();
             gvBolsistas.DataBind();
 
             lblBotao.Text = "Mostrando todos";

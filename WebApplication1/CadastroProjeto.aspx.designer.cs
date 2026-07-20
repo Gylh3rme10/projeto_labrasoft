@@ -42,31 +42,13 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.TextBox txtVerba;
 
         /// <summary>
-        /// Controle lblBolsistas.
+        /// Controle txtVerbaIndividual.
         /// </summary>
         /// <remarks>
         /// Campo gerado automaticamente.
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBolsistas;
-
-        /// <summary>
-        /// Controle lstBolsistas.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ListBox lstBolsistas;
-
-        /// <summary>
-        /// Controle lblCoordenador.
-        /// </summary>
-        /// <remarks>
-        /// Campo gerado automaticamente.
-        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCoordenador;
+        protected global::System.Web.UI.WebControls.TextBox txtVerbaIndividual;
 
         /// <summary>
         /// Controle ddlCoordenador.
@@ -76,6 +58,15 @@ namespace WebApplication1
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCoordenador;
+
+        /// <summary>
+        /// Controle lstBolsistas.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ListBox lstBolsistas;
 
         /// <summary>
         /// Controle BtnSalvar.

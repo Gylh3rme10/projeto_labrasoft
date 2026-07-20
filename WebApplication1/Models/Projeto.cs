@@ -14,6 +14,8 @@ namespace WebApplication1
 
         public decimal Verba { get; set; }
 
+        public decimal VerbaIndividual { get; set; }
+
         public Coordenador Coordenadores { get; set; }
 
         public List<Bolsista> Bolsistas { get; set; }
