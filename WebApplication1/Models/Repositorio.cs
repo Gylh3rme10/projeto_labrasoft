@@ -6,7 +6,8 @@ using System.Data.SqlClient;
 namespace WebApplication1.Models
 {
     public static class Repositorio
-    {
+    {   
+        //TESTAR CONEXAO
         private static string strConexao = ConfigurationManager.ConnectionStrings["Banco"].ConnectionString;
         public static string TestarConexao()
         {
@@ -21,6 +22,8 @@ namespace WebApplication1.Models
                 return "Erro ao conectar: " + ex.Message;
             }
         }
+
+        //CADASTRO DOS BOLSISTAS
         public static void InserirBolsista(Bolsista b)
         {
             using (SqlConnection conexao = new SqlConnection(strConexao))
@@ -61,6 +64,7 @@ namespace WebApplication1.Models
                 {
                     Bolsista b = new Bolsista
                     {
+                        Id = Convert.ToInt32(dr["ID"]),
                         Nome = dr["Nome"].ToString(),
                         CPF = dr["CPF"].ToString(),
                         Matricula = dr["Matricula"].ToString(),
@@ -100,51 +104,170 @@ namespace WebApplication1.Models
                 }
             }
         }
-
-        public static List<Coordenador> Coordenadores { get; } = new List<Coordenador>
+        // CADASTRO DOS COORDENADORES
+        public static void InserirCoordenador(Coordenador c)
         {
-            new Coordenador
+            using (SqlConnection conexao = new SqlConnection(strConexao))
             {
-                Nome = "Carlos Henrique",
-                CPF = "666.666.666-66",
-                Titulacao = "Doutor",
-                AreaDeAtuacao = "Inteligência Artificial",
-                Email = "carlos@universidade.br"
-            },
-            new Coordenador
-            {
-                Nome = "Fernanda Lima",
-                CPF = "777.777.777-77",
-                Titulacao = "Mestre",
-                AreaDeAtuacao = "Banco de Dados",
-                Email = "fernanda@universidade.br"
-            },
-            new Coordenador
-            {
-                Nome = "Ricardo Souza",
-                CPF = "888.888.888-88",
-                Titulacao = "Doutor",
-                AreaDeAtuacao = "Engenharia de Software",
-                Email = "ricardo@universidade.br"
-            },
-            new Coordenador
-            {
-                Nome = "Patrícia Gomes",
-                CPF = "999.999.999-99",
-                Titulacao = "Especialista",
-                AreaDeAtuacao = "Redes de Computadores",
-                Email = "patricia@universidade.br"
-            },
-            new Coordenador
-            {
-                Nome = "Marcos Pereira",
-                CPF = "000.000.000-00",
-                Titulacao = "Doutor",
-                AreaDeAtuacao = "Segurança da Informação",
-                Email = "marcos@universidade.br"
+                conexao.Open();
+
+                string sql = @"INSERT INTO Coordenador
+                      (Nome, CPF, Titulacao, AreaAtuacao, Email)
+                      VALUES
+                      (@Nome,@CPF,@Titulacao,@Area,@Email)";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@Nome", c.Nome);
+                cmd.Parameters.AddWithValue("@CPF", c.CPF);
+                cmd.Parameters.AddWithValue("@Titulacao", c.Titulacao);
+                cmd.Parameters.AddWithValue("@Area", c.AreaAtuacao);
+                cmd.Parameters.AddWithValue("@Email", c.Email);
+
+                cmd.ExecuteNonQuery();
             }
-        };
+        }
+        public static List<Coordenador> ListarCoordenadores()
+        {
+            List<Coordenador> lista = new List<Coordenador>();
+
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = "SELECT * FROM Coordenador";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    Coordenador c = new Coordenador
+                    {
+                        Id = Convert.ToInt32(dr["ID"]),
+                        Nome = dr["Nome"].ToString(),
+                        CPF = dr["CPF"].ToString(),
+                        Titulacao = dr["Titulacao"].ToString(),
+                        AreaAtuacao = dr["AreaAtuacao"].ToString(),
+                        Email = dr["Email"].ToString()
+                    };
+
+                    lista.Add(c);
+                }
+            }
+
+            return lista;
+        }
+        public static bool CoordenadorExiste(string cpf)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = "SELECT COUNT(*) FROM Coordenador WHERE CPF=@CPF";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@CPF", cpf);
+
+                int quantidade = (int)cmd.ExecuteScalar();
+
+                return quantidade > 0;
+            }
+        }
+       //CADASTRO DOS PROJETOS
         public static List<Projeto> Projetos { get; } = new List<Projeto>();
 
+        public static void InserirProjeto(Projeto p)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                SqlTransaction transacao = conexao.BeginTransaction();
+
+                try
+                {
+                    // Insere o projeto
+                    string sqlProjeto = @"
+                        INSERT INTO Projeto
+                        (Titulo, AreaConhecimento, VerbaAprovada, CPFCoordenador)
+
+                        VALUES
+
+                        (@Titulo, @AreaConhecimento, @VerbaAprovada, @CPFCoordenador);
+
+                        SELECT SCOPE_IDENTITY();";
+
+                    SqlCommand cmdProjeto = new SqlCommand(sqlProjeto, conexao, transacao);
+
+                    cmdProjeto.Parameters.AddWithValue("@Titulo", p.Titulo);
+                    cmdProjeto.Parameters.AddWithValue("@AreaConhecimento", p.AreaConhecimento);
+                    cmdProjeto.Parameters.AddWithValue("@VerbaAprovada", p.VerbaAprovada);
+                    cmdProjeto.Parameters.AddWithValue("@CPFCoordenador", p.Coordenadores.CPF);
+
+                    int idProjeto = Convert.ToInt32(cmdProjeto.ExecuteScalar());
+
+                    // Insere cada bolsista
+                    foreach (Bolsista b in p.Bolsistas)
+                    {
+                        string sqlBolsista = @"
+                            INSERT INTO ProjetoBolsista
+                            (IdProjeto, CPFBolsista)
+
+                            VALUES
+
+                            (@IdProjeto, @CPFBolsista)";
+
+                        SqlCommand cmdBolsista =
+                            new SqlCommand(sqlBolsista, conexao, transacao);
+
+                        cmdBolsista.Parameters.AddWithValue("@IdProjeto", idProjeto);
+                        cmdBolsista.Parameters.AddWithValue("@CPFBolsista", b.CPF);
+
+                        cmdBolsista.ExecuteNonQuery();
+                    }
+
+                    transacao.Commit();
+                }
+                catch
+                {
+                    transacao.Rollback();
+                    throw;
+                }
+            }
+        }
+        public static List<Projeto> ListarProjetos()
+        {
+            List<Projeto> lista = new List<Projeto>();
+
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = "SELECT * FROM Projeto";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    Projeto p = new Projeto();
+
+                    p.Id = Convert.ToInt32(dr["Id"]);
+                    p.Titulo = dr["Titulo"].ToString();
+                    p.AreaConhecimento = dr["AreaConhecimento"].ToString();
+                    p.VerbaAprovada = Convert.ToDecimal(dr["VerbaAprovada"]);
+
+                    lista.Add(p);
+                }
+
+                dr.Close();
+            }
+
+            return lista;
+        }
     }
 }

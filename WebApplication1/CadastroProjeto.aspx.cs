@@ -16,14 +16,14 @@ namespace WebApplication1
         {
             if (!IsPostBack)
             {
-                ddlCoordenador.DataSource = Repositorio.Coordenadores;
+                ddlCoordenador.DataSource = Repositorio.ListarCoordenadores();
                 ddlCoordenador.DataTextField = "Nome";
-                ddlCoordenador.DataValueField = "CPF";
+                ddlCoordenador.DataValueField = "Id";
                 ddlCoordenador.DataBind();
 
                 lstBolsistas.DataSource = Repositorio.ListarBolsistas();
                 lstBolsistas.DataTextField = "Nome";   // O que aparece na lista
-                lstBolsistas.DataValueField = "CPF";   // Valor associado ao item
+                lstBolsistas.DataValueField = "Id";   // Valor associado ao item
                 lstBolsistas.DataBind();
 
                 ddlCoordenador.Items.Insert(0,
@@ -51,21 +51,24 @@ namespace WebApplication1
                 Projeto novoProjeto = new Projeto();
 
                 novoProjeto.Titulo = txtTitulo.Text;
-                novoProjeto.areaConhecimento = txtAreaConhecimento.Text;
+                novoProjeto.AreaConhecimento = txtAreaConhecimento.Text;
                 
                 decimal verba;
 
                 if (decimal.TryParse(txtVerba.Text, NumberStyles.Number, new CultureInfo("pt-BR"), out verba))
                 {
-                    novoProjeto.Verba = verba;
+                    novoProjeto.VerbaAprovada = verba;
                 }
                 else
                 {
                     lblMensagem.Text = "Digite um valor válido para a verba.";
                     return;
                 }
-                novoProjeto.Coordenadores = Repositorio.Coordenadores
-                    .FirstOrDefault(c => c.CPF == ddlCoordenador.SelectedValue);
+                int idCoordenador = Convert.ToInt32(ddlCoordenador.SelectedValue);
+
+                novoProjeto.Coordenadores = Repositorio.ListarCoordenadores()
+                    .FirstOrDefault(c => c.Id == idCoordenador);
+                //terminar substituição de CPF por ID
 
                 // Bolsistas selecionados
                 foreach (ListItem item in lstBolsistas.Items)
@@ -83,7 +86,7 @@ namespace WebApplication1
                 }
 
                 // Salva o projeto
-                Repositorio.Projetos.Add(novoProjeto);
+                Repositorio.InserirProjeto(novoProjeto);
 
                 Response.Redirect("CadastroProjeto.aspx");
 
@@ -94,7 +97,7 @@ namespace WebApplication1
             }
             catch (Exception ex)
             {
-                lblMensagem.Text = "Cadastro falhou";
+                lblMensagem.Text = ex.Message;
                 lblMensagem.ForeColor = System.Drawing.Color.Red;
                 Response.Redirect("CadastroProjeto.aspx");
             }
@@ -106,31 +109,51 @@ namespace WebApplication1
             {
                 int indice = Convert.ToInt32(e.CommandArgument);
 
-                Projeto projeto = Repositorio.Projetos[indice];
-
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("<b>Título:</b> ");
-                sb.Append(projeto.Titulo);
-
-                sb.Append("<br/><b>Área de Conhecimento:</b> ");
-                sb.Append(projeto.areaConhecimento);
-
-                sb.Append("<br/><b>Verba:</b> ");
-                sb.Append(projeto.Verba.ToString("C"));
-
-                sb.Append("<br/><b>Coordenador:</b> ");
-                sb.Append(projeto.Coordenadores.Nome);
-
-                sb.Append("<br/><b>Bolsistas:</b><br/>");
-                foreach (Bolsista b in projeto.Bolsistas)
+                // 1. Valida se o índice existe na lista antes de tentar acessar
+                if (indice >= 0 && indice < projetos.Count)
                 {
-                    sb.Append("- " + b.Nome + "<br/>");
-                }
+                    // Limpa mensagens de erro anteriores se houver
+                    lblMensagem.Text = string.Empty;
 
-                lblDetalhes.Text = sb.ToString();
-                pnlDetalhes.Visible = true;
+                    Projeto projeto = projetos[indice];
+
+                    // Trata o nome do Coordenador
+                    string nomeCoordenador = projeto.Coordenadores != null
+                        ? projeto.Coordenadores.Nome
+                        : "<i>Não informado</i>";
+
+                    // Trata a lista de Bolsistas
+                    string listaBolsistas = "<i>Nenhum bolsista cadastrado</i>";
+                    if (projeto.Bolsistas != null && projeto.Bolsistas.Count > 0)
+                    {
+                        // Junta o nome dos bolsistas separados por <br/>
+                        listaBolsistas = string.Join("<br/>", projeto.Bolsistas.Select(b => "- " + b.Nome));
+                    }
+
+                    // Cria os dados no formato Chave/Valor para carregar na GridView
+                    var detalhes = new[]
+                    {
+                        new { Campo = "Título:", Valor = projeto.Titulo },
+                        new { Campo = "Área de Conhecimento:", Valor = projeto.AreaConhecimento },
+                        new { Campo = "Verba Aprovada:", Valor = projeto.VerbaAprovada.ToString("C") },
+                        new { Campo = "Coordenador:", Valor = nomeCoordenador },
+                        new { Campo = "Bolsistas:", Valor = listaBolsistas }
+                    };
+
+                    // Preenche o GridView e exibe o painel
+                    gvDetalhesProjeto.DataSource = detalhes;
+                    gvDetalhesProjeto.DataBind();
+
+                    pnlDetalhes.Visible = true;
+                }
+                else
+                {
+                    // Exibe a mensagem no label de erro e oculta o painel
+                    lblMensagem.Text = "Aviso: O projeto selecionado não existe ou a lista foi atualizada.";
+                    pnlDetalhes.Visible = false;
+                }
             }
+        }
         }
         protected void btnFecharDetalhes_Click(object sender, EventArgs e)
         {
@@ -138,7 +161,7 @@ namespace WebApplication1
         }
         private void AtualizarGrid()
         {
-            gvProjetos.DataSource = Repositorio.Projetos;
+            gvProjetos.DataSource = Repositorio.ListarProjetos();
             gvProjetos.DataBind();
             pnlDetalhes.Visible = false;
             lblDetalhes.Text = "";

@@ -177,16 +177,14 @@
                     </div>
 
                 </div>
-
-                        <div class="mt-3">
-                            <asp:Label ID="lblMensagem"
-                                runat="server"
-                                CssClass="h6">
-                            </asp:Label>
-                        </div>
-
-                        <%--lista--%>
+                     <%--lista--%>
                     <div class="card-body">
+                         <div class="mt-3">
+                             <asp:Label ID="lblMensagem"
+                                 runat="server"
+                                 CssClass="h6">
+                             </asp:Label>
+                         </div>
                         <h3 class="text-secondary">Projetos cadastrados</h3>
 
                         <asp:GridView ID="gvProjetos"
@@ -202,7 +200,7 @@
 
                                 <asp:BoundField DataField="AreaConhecimento" HeaderText="Área de Conhecimento" />
 
-                                <asp:BoundField DataField="Verba"
+                                <asp:BoundField DataField="VerbaAprovada"
                                     HeaderText="Verba"
                                     DataFormatString="{0:C}" />
 
@@ -238,7 +236,17 @@
                             </div>
 
                             <div class="card-body">
-                                <asp:Label ID="lblDetalhes" runat="server"></asp:Label>
+                               <asp:Panel ID="Panel1" runat="server" Visible="false">
+                                    <h3>Detalhes do Projeto</h3>
+    
+                                    <asp:GridView ID="gvDetalhesProjeto" runat="server" AutoGenerateColumns="False" 
+                                                  ShowHeader="False" CssClass="table table-bordered">
+                                        <Columns>
+                                            <asp:BoundField DataField="Campo" ItemStyle-Font-Bold="true" ItemStyle-Width="180px" />
+                                            <asp:BoundField DataField="Valor" HtmlEncode="false" />
+                                        </Columns>
+                                    </asp:GridView>
+                                </asp:Panel>
                             </div>
 
                         </asp:Panel>

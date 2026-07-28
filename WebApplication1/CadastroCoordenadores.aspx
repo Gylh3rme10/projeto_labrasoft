@@ -139,7 +139,7 @@
                                     <Columns>
                                         <asp:BoundField DataField="Nome" HeaderText="Nome" />
                                         <asp:BoundField DataField="Email" HeaderText="Email" />
-                                        <asp:BoundField DataField="AreaDeAtuacao" HeaderText="Area de atuação" />
+                                        <asp:BoundField DataField="AreaAtuacao" HeaderText="Area de atuação" />
                                         <asp:BoundField DataField="Titulacao" HeaderText="Titulacão" />
                                     </Columns>
 

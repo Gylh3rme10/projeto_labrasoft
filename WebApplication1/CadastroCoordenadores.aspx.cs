@@ -32,7 +32,7 @@ namespace WebApplication1
                 return;
             }
 
-            if (Repositorio.Coordenadores.Any(b => b.CPF == txtCPF.Text))
+            if (Repositorio.CoordenadorExiste(txtCPF.Text))
             {
                 lblMensagem.Text = "Já existe um coordenador cadastrado com esse CPF.";
                 lblMensagem.ForeColor = System.Drawing.Color.Red;
@@ -46,11 +46,11 @@ namespace WebApplication1
 
                 novoCoordenador.Nome = txtNome.Text;
                 novoCoordenador.CPF = txtCPF.Text;
-                novoCoordenador.AreaDeAtuacao = txtAtuacao.Text;
+                novoCoordenador.AreaAtuacao = txtAtuacao.Text;
                 novoCoordenador.Email = txtEmail.Text;
                 novoCoordenador.Titulacao = ddlTitulacao.SelectedValue;
 
-                Repositorio.Coordenadores.Add(novoCoordenador);
+                Repositorio.InserirCoordenador(novoCoordenador);
 
                 Response.Redirect("CadastroBolsista.aspx");
 
@@ -70,9 +70,9 @@ namespace WebApplication1
         }
         private void AtualizarGrid()
         {
-            if (Repositorio.Coordenadores.Count > 0)
+            if (Repositorio.ListarCoordenadores().Count > 0)
             {
-                gvCoordenadores.DataSource = Repositorio.Coordenadores;
+                gvCoordenadores.DataSource = Repositorio.ListarCoordenadores();
                 gvCoordenadores.DataBind();
                 gvCoordenadores.Visible = true;
 
@@ -106,7 +106,7 @@ namespace WebApplication1
         {
             string pesquisa = txtPesquisa.Text.Trim().ToLower();
 
-            List<Coordenador> resultado = Repositorio.Coordenadores
+            List<Coordenador> resultado = Repositorio.ListarCoordenadores()
                 .Where(c =>
                     c.Nome.ToLower().Contains(pesquisa) ||
                     c.Titulacao.ToLower().Contains(pesquisa))
@@ -123,7 +123,7 @@ namespace WebApplication1
         }
         protected void MostrarTodos(object sender, EventArgs e)
         {
-            gvCoordenadores.DataSource = Repositorio.Coordenadores;
+            gvCoordenadores.DataSource = Repositorio.ListarCoordenadores();
             gvCoordenadores.DataBind();
 
             lblBotao.Text = "Mostrando todos";
