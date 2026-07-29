@@ -76,7 +76,7 @@ namespace WebApplication1
                     if (item.Selected)
                     {
                         Bolsista bolsista = Repositorio.ListarBolsistas()
-                            .FirstOrDefault(b => b.CPF == item.Value);
+                            .FirstOrDefault(b => b.Id == Convert.ToInt32(item.Value));
 
                         if (bolsista != null)
                         {
@@ -109,10 +109,10 @@ namespace WebApplication1
             {
                 int indice = Convert.ToInt32(e.CommandArgument);
 
-                // 1. Valida se o índice existe na lista antes de tentar acessar
+                List<Projeto> projetos = Repositorio.ListarProjetos();
+
                 if (indice >= 0 && indice < projetos.Count)
                 {
-                    // Limpa mensagens de erro anteriores se houver
                     lblMensagem.Text = string.Empty;
 
                     Projeto projeto = projetos[indice];
@@ -145,16 +145,18 @@ namespace WebApplication1
                     gvDetalhesProjeto.DataBind();
 
                     pnlDetalhes.Visible = true;
+                    Panel1.Visible = true;
                 }
                 else
                 {
                     // Exibe a mensagem no label de erro e oculta o painel
                     lblMensagem.Text = "Aviso: O projeto selecionado não existe ou a lista foi atualizada.";
+                    lblMensagem.Visible = true;
                     pnlDetalhes.Visible = false;
                 }
             }
         }
-        }
+        
         protected void btnFecharDetalhes_Click(object sender, EventArgs e)
         {
             pnlDetalhes.Visible = false;
@@ -164,7 +166,6 @@ namespace WebApplication1
             gvProjetos.DataSource = Repositorio.ListarProjetos();
             gvProjetos.DataBind();
             pnlDetalhes.Visible = false;
-            lblDetalhes.Text = "";
         }
         private void LimparCampos()
         {
@@ -177,7 +178,7 @@ namespace WebApplication1
             lblMensagem.CssClass = "";
 
             pnlDetalhes.Visible = false;
-            lblDetalhes.Text = "";
+           
 
             foreach (ListItem item in lstBolsistas.Items)
             {

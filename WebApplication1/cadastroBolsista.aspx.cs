@@ -54,7 +54,7 @@ namespace WebApplication1
 
                 AtualizarGrid();
 
-            } catch (Exception ex) 
+            } catch (Exception) 
             {
                 lblMensagem.Text = "Cadastro falhou";
                 lblMensagem.ForeColor = System.Drawing.Color.Red;

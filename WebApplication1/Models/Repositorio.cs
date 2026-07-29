@@ -192,11 +192,11 @@ namespace WebApplication1.Models
                     // Insere o projeto
                     string sqlProjeto = @"
                         INSERT INTO Projeto
-                        (Titulo, AreaConhecimento, VerbaAprovada, CPFCoordenador)
+                        (Titulo, AreaConhecimento, VerbaAprovada, CoordenadorID)
 
                         VALUES
 
-                        (@Titulo, @AreaConhecimento, @VerbaAprovada, @CPFCoordenador);
+                        (@Titulo, @AreaConhecimento, @VerbaAprovada, @CoordenadorID);
 
                         SELECT SCOPE_IDENTITY();";
 
@@ -205,7 +205,7 @@ namespace WebApplication1.Models
                     cmdProjeto.Parameters.AddWithValue("@Titulo", p.Titulo);
                     cmdProjeto.Parameters.AddWithValue("@AreaConhecimento", p.AreaConhecimento);
                     cmdProjeto.Parameters.AddWithValue("@VerbaAprovada", p.VerbaAprovada);
-                    cmdProjeto.Parameters.AddWithValue("@CPFCoordenador", p.Coordenadores.CPF);
+                    cmdProjeto.Parameters.AddWithValue("@CoordenadorID", p.Coordenadores.Id);
 
                     int idProjeto = Convert.ToInt32(cmdProjeto.ExecuteScalar());
 
@@ -214,17 +214,17 @@ namespace WebApplication1.Models
                     {
                         string sqlBolsista = @"
                             INSERT INTO ProjetoBolsista
-                            (IdProjeto, CPFBolsista)
+                            (ProjetoID, BolsistaID)
 
                             VALUES
 
-                            (@IdProjeto, @CPFBolsista)";
+                            (@ProjetoID, @BolsistaID)";
 
                         SqlCommand cmdBolsista =
                             new SqlCommand(sqlBolsista, conexao, transacao);
 
-                        cmdBolsista.Parameters.AddWithValue("@IdProjeto", idProjeto);
-                        cmdBolsista.Parameters.AddWithValue("@CPFBolsista", b.CPF);
+                        cmdBolsista.Parameters.AddWithValue("@ProjetoID", idProjeto);
+                        cmdBolsista.Parameters.AddWithValue("@BolsistaID", b.Id);
 
                         cmdBolsista.ExecuteNonQuery();
                     }
@@ -246,7 +246,25 @@ namespace WebApplication1.Models
             {
                 conexao.Open();
 
-                string sql = "SELECT * FROM Projeto";
+                string sql = @"
+            SELECT
+                P.ID,
+                P.Titulo,
+                P.AreaConhecimento,
+                P.VerbaAprovada,
+                P.CoordenadorID,
+
+                C.ID AS CoordID,
+                C.Nome,
+                C.CPF,
+                C.Titulacao,
+                C.AreaAtuacao,
+                C.Email
+
+            FROM Projeto P
+
+            INNER JOIN Coordenador C
+                ON P.CoordenadorID = C.ID";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
 
@@ -254,20 +272,99 @@ namespace WebApplication1.Models
 
                 while (dr.Read())
                 {
-                    Projeto p = new Projeto();
+                    Projeto projeto = new Projeto();
 
-                    p.Id = Convert.ToInt32(dr["Id"]);
-                    p.Titulo = dr["Titulo"].ToString();
-                    p.AreaConhecimento = dr["AreaConhecimento"].ToString();
-                    p.VerbaAprovada = Convert.ToDecimal(dr["VerbaAprovada"]);
+                    projeto.Id = Convert.ToInt32(dr["ID"]);
+                    projeto.Titulo = dr["Titulo"].ToString();
+                    projeto.AreaConhecimento = dr["AreaConhecimento"].ToString();
+                    projeto.VerbaAprovada = Convert.ToDecimal(dr["VerbaAprovada"]);
 
-                    lista.Add(p);
+                    projeto.Coordenadores = new Coordenador
+                    {
+                        Id = Convert.ToInt32(dr["CoordID"]),
+                        Nome = dr["Nome"].ToString(),
+                        CPF = dr["CPF"].ToString(),
+                        Titulacao = dr["Titulacao"].ToString(),
+                        AreaAtuacao = dr["AreaAtuacao"].ToString(),
+                        Email = dr["Email"].ToString()
+                    };
+
+                    lista.Add(projeto);
                 }
 
                 dr.Close();
+
+                //-------------------------------------------------
+                // Agora busca os bolsistas de cada projeto
+                //-------------------------------------------------
+
+                foreach (Projeto projeto in lista)
+                {
+                    string sqlBolsistas = @"
+
+                SELECT
+                    B.ID,
+                    B.Nome,
+                    B.CPF,
+                    B.Matricula,
+                    B.DataNascimento,
+                    B.Sexo
+
+                FROM ProjetoBolsista PB
+
+                INNER JOIN Bolsista B
+                    ON PB.BolsistaID = B.ID
+
+                WHERE PB.ProjetoID = @ProjetoID";
+
+                    SqlCommand cmdBolsistas =
+                        new SqlCommand(sqlBolsistas, conexao);
+
+                    cmdBolsistas.Parameters.AddWithValue("@ProjetoID", projeto.Id);
+
+                    SqlDataReader drBolsistas =
+                        cmdBolsistas.ExecuteReader();
+
+                    while (drBolsistas.Read())
+                    {
+                        projeto.Bolsistas.Add(new Bolsista
+                        {
+                            Id = Convert.ToInt32(drBolsistas["ID"]),
+                            Nome = drBolsistas["Nome"].ToString(),
+                            CPF = drBolsistas["CPF"].ToString(),
+                            Matricula = drBolsistas["Matricula"].ToString(),
+                            DataNascimento = Convert.ToDateTime(drBolsistas["DataNascimento"]),
+                            Sexo = drBolsistas["Sexo"].ToString()
+                        });
+                    }
+
+                    drBolsistas.Close();
+                }
             }
 
             return lista;
+        }
+        //DESPESAS
+        public static void InserirDespesa(Despesas d)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"INSERT INTO Despesa
+                      (Valor, Descricao, Categoria, ProjetoId)
+                      VALUES
+                      (@Valor,@Descricao,@Categoria,@ProjetoId)";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@Valor", d.Valor);
+                cmd.Parameters.AddWithValue("@Descricao", d.Descricao);
+                cmd.Parameters.AddWithValue("@Categoria", d.Categoria);
+                cmd.Parameters.AddWithValue("@ProjetoId", d.IdProjeto);
+
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }
