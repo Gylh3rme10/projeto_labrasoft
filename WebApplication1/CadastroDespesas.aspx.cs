@@ -52,7 +52,7 @@ namespace WebApplication1
 
                 novaDespesa.Categoria = txtCategoria.Text;
                 novaDespesa.Data = DateTime.Parse(dataDespesa.Text);
-
+                novaDespesa.Descricao = txtDescricao.Text;
                 int idProjeto = Convert.ToInt32(ddlProjeto.SelectedValue);
                 novaDespesa.IdProjeto = idProjeto;
 

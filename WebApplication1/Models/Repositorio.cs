@@ -192,11 +192,11 @@ namespace WebApplication1.Models
                     // Insere o projeto
                     string sqlProjeto = @"
                         INSERT INTO Projeto
-                        (Titulo, AreaConhecimento, VerbaAprovada, CoordenadorID)
+                        (Titulo, AreaConhecimento, VerbaAprovada, ValorBolsaIndividual, CoordenadorID)
 
                         VALUES
 
-                        (@Titulo, @AreaConhecimento, @VerbaAprovada, @CoordenadorID);
+                        (@Titulo, @AreaConhecimento, @VerbaAprovada,@ValorBolsaIndividual, @CoordenadorID);
 
                         SELECT SCOPE_IDENTITY();";
 
@@ -205,6 +205,7 @@ namespace WebApplication1.Models
                     cmdProjeto.Parameters.AddWithValue("@Titulo", p.Titulo);
                     cmdProjeto.Parameters.AddWithValue("@AreaConhecimento", p.AreaConhecimento);
                     cmdProjeto.Parameters.AddWithValue("@VerbaAprovada", p.VerbaAprovada);
+                    cmdProjeto.Parameters.AddWithValue("@ValorBolsaIndividual", p.ValorBolsaIndividual);
                     cmdProjeto.Parameters.AddWithValue("@CoordenadorID", p.Coordenadores.Id);
 
                     int idProjeto = Convert.ToInt32(cmdProjeto.ExecuteScalar());
@@ -352,19 +353,70 @@ namespace WebApplication1.Models
                 conexao.Open();
 
                 string sql = @"INSERT INTO Despesa
-                      (Valor, Descricao, Categoria, ProjetoId)
+                      (Valor, Descricao, Categoria, Data, ProjetoId)
                       VALUES
-                      (@Valor,@Descricao,@Categoria,@ProjetoId)";
+                      (@Valor,@Descricao,@Categoria, @Data, @ProjetoId)";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
 
                 cmd.Parameters.AddWithValue("@Valor", d.Valor);
                 cmd.Parameters.AddWithValue("@Descricao", d.Descricao);
                 cmd.Parameters.AddWithValue("@Categoria", d.Categoria);
+                cmd.Parameters.AddWithValue("@Data", d.Data);
                 cmd.Parameters.AddWithValue("@ProjetoId", d.IdProjeto);
 
                 cmd.ExecuteNonQuery();
             }
+        }
+        public static decimal TotalDespesasProjeto(int idProjeto)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"SELECT ISNULL(SUM(Valor), 0)
+                       FROM Despesa
+                       WHERE ProjetoId = @ProjetoId";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+                cmd.Parameters.AddWithValue("@ProjetoId", idProjeto);
+
+                return Convert.ToDecimal(cmd.ExecuteScalar());
+            }
+        }
+        public static List<Despesas> ListarDespesasPorProjeto(int idProjeto)
+        {
+            List<Despesas> lista = new List<Despesas>();
+
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"SELECT Id, Valor, Descricao, Categoria, Data
+                       FROM Despesa
+                       WHERE ProjetoId = @ProjetoId";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+                cmd.Parameters.AddWithValue("@ProjetoId", idProjeto);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    Despesas d = new Despesas
+                    {
+                        Id = Convert.ToInt32(dr["Id"]),
+                        Valor = Convert.ToDecimal(dr["Valor"]),
+                        Descricao = dr["Descricao"].ToString(),
+                        Categoria = dr["Categoria"].ToString(),
+                        Data = Convert.ToDateTime(dr["Data"])
+                    };
+
+                    lista.Add(d);
+                }
+            }
+
+            return lista;
         }
     }
 }

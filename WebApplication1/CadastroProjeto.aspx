@@ -177,82 +177,194 @@
                     </div>
 
                 </div>
-                     <%--lista--%>
-                    <div class="card-body">
-                         <div class="mt-3">
-                             <asp:Label ID="lblMensagem"
-                                 runat="server"
-                                 CssClass="h6">
-                             </asp:Label>
-                         </div>
-                        <h3 class="text-secondary">Projetos cadastrados</h3>
 
-                        <asp:GridView ID="gvProjetos"
+                <%-- Lista de Projetos --%>
+
+                <div class="card-body">
+
+                    <div class="mt-3">
+                        <asp:Label ID="lblMensagem"
                             runat="server"
-                            AutoGenerateColumns="False"
-                            CssClass="table table-hover table-bordered align-middle"
-                            DataKeyNames="Titulo"
-                            OnRowCommand="gvProjetos_RowCommand">
-
-                            <Columns>
-
-                                <asp:BoundField DataField="Titulo" HeaderText="Título" />
-
-                                <asp:BoundField DataField="AreaConhecimento" HeaderText="Área de Conhecimento" />
-
-                                <asp:BoundField DataField="VerbaAprovada"
-                                    HeaderText="Verba"
-                                    DataFormatString="{0:C}" />
-
-                                <asp:TemplateField HeaderText="Ações">
-                                    <ItemTemplate>
-                                        <asp:Button
-                                            ID="btnDetalhes"
-                                            runat="server"
-                                            Text="Detalhes"
-                                           CssClass="btn btn-outline-primary btn-sm"
-                                            CommandName="Detalhes"
-                                            CommandArgument="<%# Container.DataItemIndex %>"/>
-                                        <asp:Button
-                                            ID="btnFecharDetalhes"
-                                            runat="server"
-                                            Text="Fechar"
-                                            CssClass="btn btn-secondary btn-sm"
-                                            OnClick="btnFecharDetalhes_Click" />
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                            </Columns>
-
-                        </asp:GridView>
-                        <asp:Panel
-                            ID="pnlDetalhes"
-                            runat="server"
-                            Visible="false"
-                            CssClass="card border-primary mt-3">
-
-                            <div class="card-header bg-primary text-white">
-                                Informações do Projeto
-                            </div>
-
-                            <div class="card-body">
-                               <asp:Panel ID="Panel1" runat="server" Visible="false">
-                                    <h3>Detalhes do Projeto</h3>
-    
-                                    <asp:GridView ID="gvDetalhesProjeto" runat="server" AutoGenerateColumns="False" 
-                                                  ShowHeader="False" CssClass="table table-bordered">
-                                        <Columns>
-                                            <asp:BoundField DataField="Campo" ItemStyle-Font-Bold="true" ItemStyle-Width="180px" />
-                                            <asp:BoundField DataField="Valor" HtmlEncode="false" />
-                                        </Columns>
-                                    </asp:GridView>
-                                </asp:Panel>
-                            </div>
-
-                        </asp:Panel>
-                        </div>
+                            CssClass="h6">
+                        </asp:Label>
                     </div>
+
+                    <h3 class="text-secondary mb-3">
+                        Projetos cadastrados
+                    </h3>
+
+                    <asp:GridView ID="gvProjetos"
+                        runat="server"
+                        AutoGenerateColumns="False"
+                        CssClass="table table-hover table-bordered align-middle"
+                        DataKeyNames="Id"
+                        OnRowCommand="gvProjetos_RowCommand">
+
+                        <Columns>
+
+                            <asp:BoundField
+                                DataField="Titulo"
+                                HeaderText="Título" />
+
+                            <asp:BoundField
+                                DataField="AreaConhecimento"
+                                HeaderText="Área de Conhecimento" />
+
+                            <asp:BoundField
+                                DataField="VerbaAprovada"
+                                HeaderText="Verba"
+                                DataFormatString="{0:C}" />
+
+                            <asp:TemplateField HeaderText="Ações">
+                                <ItemTemplate>
+
+                                    <asp:Button
+                                        ID="btnDetalhes"
+                                        runat="server"
+                                        Text="Detalhes"
+                                        CssClass="btn btn-outline-primary btn-sm"
+                                        CommandName="Detalhes"
+                                        CommandArgument='<%# Eval("Id") %>' />
+
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                        </Columns>
+
+                    </asp:GridView>
+
+                    <asp:Panel ID="pnlDetalhes"
+                        runat="server"
+                        Visible="false"
+                        CssClass="card border-primary mt-4">
+
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Detalhes do Projeto</h5>
+                        </div>
+
+                        <div class="card-body">
+
+                            <asp:GridView
+                                ID="gvDetalhesProjeto"
+                                runat="server"
+                                AutoGenerateColumns="False"
+                                CssClass="table table-bordered table-striped">
+
+                                <Columns>
+
+                                    <asp:BoundField
+                                        DataField="Titulo"
+                                        HeaderText="Título" />
+
+                                    <asp:BoundField
+                                        DataField="AreaConhecimento"
+                                        HeaderText="Área" />
+
+                                    <asp:BoundField
+                                        DataField="Coordenador"
+                                        HeaderText="Coordenador" />
+                                    <asp:BoundField
+                                        DataField="Bolsistas"
+                                        HeaderText="Bolsistas" />
+                                    <asp:BoundField
+                                        DataField="VerbaAprovada"
+                                        HeaderText="Verba"
+                                        DataFormatString="{0:C}" />
+
+                                    <asp:BoundField
+                                        DataField="TotalDespesas"
+                                        HeaderText="Despesas"
+                                        DataFormatString="{0:C}" />
+
+                                    <asp:BoundField
+                                        DataField="Saldo"
+                                        HeaderText="Saldo"
+                                        DataFormatString="{0:C}" />
+
+                                </Columns>
+
+                            </asp:GridView>
+
+                            <div class="mt-3">
+
+                                <asp:Button
+                                    ID="btnVerDespesas"
+                                    runat="server"
+                                    Text="Ver despesas"
+                                    CssClass="btn btn-primary"
+                                    OnClick="btnVerDespesas_Click" />
+
+                                <asp:Button
+                                    ID="btnOcultarDetalhes"
+                                    runat="server"
+                                    Text="Ocultar detalhes"
+                                    CssClass="btn btn-secondary ms-2"
+                                    OnClick="btnFecharDetalhes_Click" />
+
+                            </div>
+
+                        </div>
+
+                    </asp:Panel>
+
+                    <asp:Panel
+                        ID="pnlDespesas"
+                        runat="server"
+                        Visible="false"
+                        CssClass="card border-secondary mt-3">
+
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Despesas do Projeto</h5>
+                        </div>
+
+                        <div class="card-body">
+
+                            <asp:GridView
+                                ID="gvDespesas"
+                                runat="server"
+                                AutoGenerateColumns="False"
+                                CssClass="table table-striped table-bordered">
+
+                                <Columns>
+
+                                    <asp:BoundField
+                                        DataField="Data"
+                                        HeaderText="Data"
+                                        DataFormatString="{0:dd/MM/yyyy}" />
+
+                                    <asp:BoundField
+                                        DataField="Categoria"
+                                        HeaderText="Categoria" />
+
+                                    <asp:BoundField
+                                        DataField="Descricao"
+                                        HeaderText="Descrição">
+                                        <ItemStyle Width="500px" Wrap="true" />
+                                    </asp:BoundField>
+
+                                    <asp:BoundField
+                                        DataField="Valor"
+                                        HeaderText="Valor"
+                                        DataFormatString="{0:C}" />
+
+                                </Columns>
+
+                            </asp:GridView>
+
+                            <asp:Button
+                                ID="btnFecharDespesas"
+                                runat="server"
+                                Text="Fechar despesas"
+                                CssClass="btn btn-secondary"
+                                OnClick="btnFecharDespesas_Click" />
+
+                        </div>
+
+                    </asp:Panel>
+
+                </div>
                 </div>
             </div>
        </div>
-        </asp:Content>
+   </div>
+  </asp:Content>
