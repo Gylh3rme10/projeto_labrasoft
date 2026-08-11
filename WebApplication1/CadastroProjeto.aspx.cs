@@ -201,6 +201,7 @@ namespace WebApplication1
             lstBolsistas.DataTextField = "Nome";
             lstBolsistas.DataValueField = "Id";
             lstBolsistas.DataBind();
+
         }
         private void CarregarCoordenadores()
         {
@@ -251,7 +252,32 @@ namespace WebApplication1
         {
             LimparCampos();
         }
+        protected void BtnEditar_Click(object sender, EventArgs e)
+        {
+            if (ViewState["ProjetoId"] == null)
+            {
+                lblMensagem.Text = "Nenhum projeto selecionado.";
+                lblMensagem.ForeColor = System.Drawing.Color.Red;
+                return;
+            }
 
+            int idProjeto = Convert.ToInt32(ViewState["ProjetoId"]);
+
+            Projeto projeto = Repositorio.ListarProjetos()
+                .FirstOrDefault(p => p.Id == idProjeto);
+
+            if (projeto == null)
+            {
+                lblMensagem.Text = "Projeto não encontrado.";
+                lblMensagem.ForeColor = System.Drawing.Color.Red;
+                return;
+            }
+
+            pnlEditarBolsistas.Visible = true;
+
+            CarregarBolsistasProjeto(projeto);
+            CarregarBolsistasDisponiveis();
+        }
         protected void btnVerDespesas_Click(object sender, EventArgs e)
         {
             int idProjeto = Convert.ToInt32(ViewState["ProjetoId"]);
@@ -263,6 +289,108 @@ namespace WebApplication1
 
             pnlDespesas.Visible = true;
         }
+        private void CarregarBolsistasProjeto(Projeto projeto)
+        {
+            gvBolsistasProjeto.DataSource = projeto.Bolsistas;
+            gvBolsistasProjeto.DataBind();
+        }
+        private void CarregarBolsistasDisponiveis()
+        {
+            List<Bolsista> todos = Repositorio.ListarBolsistas();
 
+            List<Projeto> projetos = Repositorio.ListarProjetos();
+
+            List<int> idsEmProjeto = projetos
+                .SelectMany(p => p.Bolsistas)
+                .Select(b => b.Id)
+                .Distinct()
+                .ToList();
+
+            List<Bolsista> disponiveis = todos
+                .Where(b => !idsEmProjeto.Contains(b.Id))
+                .ToList();
+
+            ddlBolsistaAdicionar.DataSource = disponiveis;
+            ddlBolsistaAdicionar.DataTextField = "Nome";
+            ddlBolsistaAdicionar.DataValueField = "Id";
+            ddlBolsistaAdicionar.DataBind();
+
+            ddlBolsistaAdicionar.Items.Insert(
+                0,
+                new ListItem("-- Selecione um bolsista --", "")
+            );
+        }
+        protected void btnAdicionarBolsista_Click(object sender, EventArgs e)
+        {
+            if (ViewState["ProjetoId"] == null)
+                return;
+
+            if (string.IsNullOrEmpty(ddlBolsistaAdicionar.SelectedValue))
+            {
+                lblMensagem.Text = "Selecione um bolsista.";
+                lblMensagem.ForeColor = System.Drawing.Color.Red;
+                return;
+            }
+
+            int idProjeto = Convert.ToInt32(ViewState["ProjetoId"]);
+            int idBolsista = Convert.ToInt32(ddlBolsistaAdicionar.SelectedValue);
+
+            try
+            {
+                Repositorio.AdicionarBolsistaAoProjeto(
+                    idProjeto,
+                    idBolsista
+                );
+
+                Projeto projeto = Repositorio.ListarProjetos()
+                    .FirstOrDefault(p => p.Id == idProjeto);
+
+                CarregarBolsistasProjeto(projeto);
+                CarregarBolsistasDisponiveis();
+
+                lblMensagem.Text = "Bolsista adicionado com sucesso.";
+                lblMensagem.ForeColor = System.Drawing.Color.Green;
+            }
+            catch (Exception ex)
+            {
+                lblMensagem.Text = ex.Message;
+                lblMensagem.ForeColor = System.Drawing.Color.Red;
+            }
+        }
+        protected void gvBolsistasProjeto_RowCommand(
+            object sender,
+            GridViewCommandEventArgs e)
+        {
+            if (e.CommandName != "Remover")
+                return;
+
+            if (ViewState["ProjetoId"] == null)
+                return;
+
+            int idProjeto = Convert.ToInt32(ViewState["ProjetoId"]);
+            int idBolsista = Convert.ToInt32(e.CommandArgument);
+
+            try
+            {
+                Repositorio.RemoverBolsistaDoProjeto(
+                    idProjeto,
+                    idBolsista
+                );
+
+                Projeto projeto = Repositorio.ListarProjetos()
+                    .FirstOrDefault(p => p.Id == idProjeto);
+
+                CarregarBolsistasProjeto(projeto);
+                CarregarBolsistasDisponiveis();
+
+                lblMensagem.Text = "Bolsista removido com sucesso.";
+                lblMensagem.ForeColor = System.Drawing.Color.Green;
+            }
+            catch (Exception ex)
+            {
+                lblMensagem.Text = ex.Message;
+                lblMensagem.ForeColor = System.Drawing.Color.Red;
+            }
+        }
     }
 }

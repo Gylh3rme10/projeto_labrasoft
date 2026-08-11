@@ -51,10 +51,10 @@ namespace WebApplication1
 
 
                 novaDespesa.Categoria = txtCategoria.Text;
-                novaDespesa.Data = DateTime.Parse(dataDespesa.Text);
+                novaDespesa.DataDespesa = DateTime.Parse(dataDespesa.Text);
                 novaDespesa.Descricao = txtDescricao.Text;
                 int idProjeto = Convert.ToInt32(ddlProjeto.SelectedValue);
-                novaDespesa.IdProjeto = idProjeto;
+                novaDespesa.ProjetoID = idProjeto;
 
                 decimal valor;
                 if (decimal.TryParse(txtValorDespesa.Text, NumberStyles.Number, new CultureInfo("pt-BR"), out valor))

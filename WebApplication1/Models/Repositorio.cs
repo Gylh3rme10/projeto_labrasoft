@@ -239,6 +239,45 @@ namespace WebApplication1.Models
                 }
             }
         }
+        public static void AdicionarBolsistaAoProjeto(int idProjeto, int idBolsista)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"
+            INSERT INTO ProjetoBolsista
+            (ProjetoID, BolsistaID)
+            VALUES
+            (@ProjetoID, @BolsistaID)";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@ProjetoID", idProjeto);
+                cmd.Parameters.AddWithValue("@BolsistaID", idBolsista);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public static void RemoverBolsistaDoProjeto(int idProjeto, int idBolsista)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"
+            DELETE FROM ProjetoBolsista
+            WHERE ProjetoID = @ProjetoID
+            AND BolsistaID = @BolsistaID";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@ProjetoID", idProjeto);
+                cmd.Parameters.AddWithValue("@BolsistaID", idBolsista);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
         public static List<Projeto> ListarProjetos()
         {
             List<Projeto> lista = new List<Projeto>();
@@ -353,17 +392,17 @@ namespace WebApplication1.Models
                 conexao.Open();
 
                 string sql = @"INSERT INTO Despesa
-                      (Valor, Descricao, Categoria, Data, ProjetoId)
+                      (Valor, Descricao, Categoria, DataDespesa, ProjetoID)
                       VALUES
-                      (@Valor,@Descricao,@Categoria, @Data, @ProjetoId)";
+                      (@Valor,@Descricao,@Categoria, @DataDespesa, @ProjetoID)";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
 
                 cmd.Parameters.AddWithValue("@Valor", d.Valor);
                 cmd.Parameters.AddWithValue("@Descricao", d.Descricao);
                 cmd.Parameters.AddWithValue("@Categoria", d.Categoria);
-                cmd.Parameters.AddWithValue("@Data", d.Data);
-                cmd.Parameters.AddWithValue("@ProjetoId", d.IdProjeto);
+                cmd.Parameters.AddWithValue("@DataDespesa", d.DataDespesa);
+                cmd.Parameters.AddWithValue("@ProjetoID", d.ProjetoID);
 
                 cmd.ExecuteNonQuery();
             }
@@ -376,10 +415,10 @@ namespace WebApplication1.Models
 
                 string sql = @"SELECT ISNULL(SUM(Valor), 0)
                        FROM Despesa
-                       WHERE ProjetoId = @ProjetoId";
+                       WHERE ProjetoID = @ProjetoID";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
-                cmd.Parameters.AddWithValue("@ProjetoId", idProjeto);
+                cmd.Parameters.AddWithValue("@ProjetoID", idProjeto);
 
                 return Convert.ToDecimal(cmd.ExecuteScalar());
             }
@@ -392,12 +431,12 @@ namespace WebApplication1.Models
             {
                 conexao.Open();
 
-                string sql = @"SELECT Id, Valor, Descricao, Categoria, Data
+                string sql = @"SELECT Id, Valor, Descricao, Categoria, DataDespesa
                        FROM Despesa
-                       WHERE ProjetoId = @ProjetoId";
+                       WHERE ProjetoID = @ProjetoID";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
-                cmd.Parameters.AddWithValue("@ProjetoId", idProjeto);
+                cmd.Parameters.AddWithValue("@ProjetoID", idProjeto);
 
                 SqlDataReader dr = cmd.ExecuteReader();
 
@@ -409,7 +448,7 @@ namespace WebApplication1.Models
                         Valor = Convert.ToDecimal(dr["Valor"]),
                         Descricao = dr["Descricao"].ToString(),
                         Categoria = dr["Categoria"].ToString(),
-                        Data = Convert.ToDateTime(dr["Data"])
+                        DataDespesa = Convert.ToDateTime(dr["DataDespesa"])
                     };
 
                     lista.Add(d);

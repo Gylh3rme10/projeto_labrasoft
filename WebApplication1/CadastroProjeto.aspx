@@ -284,7 +284,71 @@
                                 </Columns>
 
                             </asp:GridView>
+                            <asp:Panel
+                                ID="pnlEditarBolsistas"
+                                runat="server"
+                                Visible="false"
+                                CssClass="mt-3">
 
+                                <h5>Editar bolsistas</h5>
+
+                                <asp:GridView
+                                    ID="gvBolsistasProjeto"
+                                    runat="server"
+                                    AutoGenerateColumns="False"
+                                    CssClass="table table-bordered"
+                                    OnRowCommand="gvBolsistasProjeto_RowCommand">
+
+                                    <Columns>
+
+                                        <asp:BoundField
+                                            DataField="Nome"
+                                            HeaderText="Bolsista" />
+
+                                        <asp:TemplateField HeaderText="Ação">
+
+                                            <ItemTemplate>
+
+                                                <asp:Button
+                                                    ID="btnRemoverBolsista"
+                                                    runat="server"
+                                                    Text="Remover"
+                                                    CssClass="btn btn-danger btn-sm"
+                                                    CommandName="Remover"
+                                                    CommandArgument='<%# Eval("Id") %>' />
+
+                                            </ItemTemplate>
+
+                                        </asp:TemplateField>
+
+                                    </Columns>
+
+                                </asp:GridView>
+
+
+                                <div class="mt-3">
+
+                                    <asp:Label
+                                        ID="lblAdicionarBolsista"
+                                        runat="server"
+                                        Text="Adicionar bolsista:" />
+
+                                    <asp:DropDownList
+                                        ID="ddlBolsistaAdicionar"
+                                        runat="server"
+                                        CssClass="form-select mt-1">
+                                    </asp:DropDownList>
+
+                                    <asp:Button
+                                        ID="btnAdicionarBolsista"
+                                        runat="server"
+                                        Text="Adicionar"
+                                        CssClass="btn btn-success mt-2"
+                                        OnClick="btnAdicionarBolsista_Click" />
+
+                                </div>
+
+                            </asp:Panel>
                             <div class="mt-3">
 
                                 <asp:Button
@@ -293,6 +357,13 @@
                                     Text="Ver despesas"
                                     CssClass="btn btn-primary"
                                     OnClick="btnVerDespesas_Click" />
+
+                                <asp:Button
+                                    ID="btnEditar"
+                                    runat="server"
+                                    Text="Editar"
+                                    CssClass="btn btn-secondary"
+                                    OnClick="BtnEditar_Click" />
 
                                 <asp:Button
                                     ID="btnOcultarDetalhes"
@@ -328,7 +399,7 @@
                                 <Columns>
 
                                     <asp:BoundField
-                                        DataField="Data"
+                                        DataField="DataDespesa"
                                         HeaderText="Data"
                                         DataFormatString="{0:dd/MM/yyyy}" />
 
@@ -361,7 +432,7 @@
                         </div>
 
                     </asp:Panel>
-
+                    
                 </div>
                 </div>
             </div>

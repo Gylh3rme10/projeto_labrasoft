@@ -14,9 +14,9 @@ namespace WebApplication1
         public string Categoria { get; set; }
         public decimal Valor { get; set; }
 
-        public DateTime Data { get; set; }
+        public DateTime DataDespesa { get; set; }
 
-        public int IdProjeto { get; set; }
+        public int ProjetoID { get; set; }
 
     }
 }

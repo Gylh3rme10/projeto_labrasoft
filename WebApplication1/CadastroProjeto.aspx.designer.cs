@@ -123,6 +123,51 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.GridView gvDetalhesProjeto;
 
         /// <summary>
+        /// Controle pnlEditarBolsistas.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlEditarBolsistas;
+
+        /// <summary>
+        /// Controle gvBolsistasProjeto.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvBolsistasProjeto;
+
+        /// <summary>
+        /// Controle lblAdicionarBolsista.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAdicionarBolsista;
+
+        /// <summary>
+        /// Controle ddlBolsistaAdicionar.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlBolsistaAdicionar;
+
+        /// <summary>
+        /// Controle btnAdicionarBolsista.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAdicionarBolsista;
+
+        /// <summary>
         /// Controle btnVerDespesas.
         /// </summary>
         /// <remarks>
@@ -130,6 +175,15 @@ namespace WebApplication1
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnVerDespesas;
+
+        /// <summary>
+        /// Controle btnEditar.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnEditar;
 
         /// <summary>
         /// Controle btnOcultarDetalhes.
