@@ -12,7 +12,7 @@ namespace WebApplication1
 
         public string Email { get; set; }
 
-        public decimal Senha { get; set; }
+        public string Senha { get; set; }
 
     }
 }

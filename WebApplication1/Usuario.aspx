@@ -56,6 +56,10 @@
                                     Text="Entrar"
                                     CssClass="btn btn-primary"
                                     OnClick="btnLogin_Click" />
+                                 <asp:Label
+                                     ID="lblMensagemLogin"
+                                     runat="server"
+                                     Visible="false" />
                             </div>
 
                             <div class="text-center mt-3">
@@ -65,7 +69,12 @@
                                     Text="Ainda não tenho uma conta"
                                     CssClass="text-decoration-none"
                                     OnClick="lnkCadastro_Click" />
+                                <asp:Label
+                                    ID="lblMensagemCadastro"
+                                    runat="server"
+                                    Visible="false" />
                             </div>
+                            
                         </div>
                     </div>
                 </div>

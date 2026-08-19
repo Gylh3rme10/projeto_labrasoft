@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebApplication1.Models;
 
 namespace WebApplication1
 {
@@ -28,13 +29,103 @@ namespace WebApplication1
         // Botão Entrar
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            // Vamos implementar o login aqui depois.
+            string email = txtEmailLogin.Text.Trim();
+            string senha = txtSenhaLogin.Text;
+
+            // Validação dos campos
+            if (string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(senha))
+            {
+                MostrarMensagemLogin("Preencha o e-mail e a senha.", false);
+                return;
+            }
+
+            // Verifica login
+            Usuarios usuario = Repositorio.ValidarLogin(email, senha);
+
+            if (usuario != null)
+            {
+                // Guarda o usuário logado na sessão
+                Session["Usuario"] = usuario;
+
+                // Redireciona para a página principal
+                Response.Redirect("CadastroProjeto.aspx");
+            }
+            else
+            {
+                MostrarMensagemLogin("E-mail ou senha incorretos.", false);
+            }
         }
 
         // Botão Cadastrar
         protected void btnCadastro_Click(object sender, EventArgs e)
         {
-            // Vamos implementar o cadastro aqui depois.
+            string nome = txtNome.Text.Trim();
+            string email = txtEmail.Text.Trim();
+            string senha = txtSenha.Text;
+
+            // Validação dos campos
+            if (string.IsNullOrWhiteSpace(nome) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(senha))
+            {
+                MostrarMensagemCadastro("Preencha todos os campos.", false);
+                return;
+            }
+
+            // Verifica se o e-mail já existe
+            if (Repositorio.UsuarioExiste(email))
+            {
+                MostrarMensagemCadastro(
+                    "Já existe um usuário cadastrado com este e-mail.",
+                    false);
+
+                return;
+            }
+
+            // Cria o usuário
+            Usuarios usuario = new Usuarios
+            {
+                Nome = nome,
+                Email = email,
+                Senha = senha
+            };
+
+            // Insere no banco
+            Repositorio.InserirUsuario(usuario);
+
+            // Limpa os campos
+            txtNome.Text = "";
+            txtEmail.Text = "";
+            txtSenha.Text = "";
+
+            // Volta para o login
+            mvUsuario.ActiveViewIndex = 0;
+
+            MostrarMensagemLogin(
+                "Cadastro realizado com sucesso!",
+                true);
+        }
+        private void MostrarMensagemLogin(string mensagem, bool sucesso)
+        {
+            string classe = sucesso
+                ? "alert alert-success mt-3"
+                : "alert alert-danger mt-3";
+
+            lblMensagemLogin.Text = mensagem;
+            lblMensagemLogin.CssClass = classe;
+            lblMensagemLogin.Visible = true;
+        }
+
+        private void MostrarMensagemCadastro(string mensagem, bool sucesso)
+        {
+            string classe = sucesso
+                ? "alert alert-success mt-3"
+                : "alert alert-danger mt-3";
+
+            lblMensagemCadastro.Text = mensagem;
+            lblMensagemCadastro.CssClass = classe;
+            lblMensagemCadastro.Visible = true;
         }
     }
 }

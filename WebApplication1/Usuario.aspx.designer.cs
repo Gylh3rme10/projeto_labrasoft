@@ -78,6 +78,15 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.Button btnLogin;
 
         /// <summary>
+        /// Controle lblMensagemLogin.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMensagemLogin;
+
+        /// <summary>
         /// Controle lnkCadastro.
         /// </summary>
         /// <remarks>
@@ -85,6 +94,15 @@ namespace WebApplication1
         /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkCadastro;
+
+        /// <summary>
+        /// Controle lblMensagemCadastro.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Para modificar, mova a declaração de campo do arquivo de designer a um arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMensagemCadastro;
 
         /// <summary>
         /// Controle vwCadastro.

@@ -457,5 +457,90 @@ namespace WebApplication1.Models
 
             return lista;
         }
+
+        // USUÁRIOS
+
+        public static void InserirUsuario(Usuarios u)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"
+                INSERT INTO Usuarios
+                (Nome, Email, Senha)
+                VALUES
+                (@Nome, @Email, @Senha)";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@Nome", u.Nome);
+                cmd.Parameters.AddWithValue("@Email", u.Email);
+                cmd.Parameters.AddWithValue("@Senha", u.Senha);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static bool UsuarioExiste(string email)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"
+                SELECT COUNT(*)
+                FROM Usuarios
+                WHERE Email = @Email";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@Email", email);
+
+                int quantidade = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return quantidade > 0;
+            }
+        }
+
+        public static Usuarios ValidarLogin(string email, string senha)
+        {
+            using (SqlConnection conexao = new SqlConnection(strConexao))
+            {
+                conexao.Open();
+
+                string sql = @"
+                SELECT ID, Nome, Email, Senha
+                FROM Usuarios
+                WHERE Email = @Email
+                AND Senha = @Senha";
+
+                SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Senha", senha);
+
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    Usuarios usuario = new Usuarios
+                    {
+                        Id = Convert.ToInt32(dr["ID"]),
+                        Nome = dr["Nome"].ToString(),
+                        Email = dr["Email"].ToString(),
+                        Senha = dr["Senha"].ToString()
+                    };
+
+                    dr.Close();
+
+                    return usuario;
+                }
+
+                dr.Close();
+
+                return null;
+            }
+        }
     }
 }
