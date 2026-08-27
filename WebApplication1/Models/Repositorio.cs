@@ -468,15 +468,16 @@ namespace WebApplication1.Models
 
                 string sql = @"
                 INSERT INTO Usuarios
-                (Nome, Email, Senha)
+                (Nome, Email, Senha, TipoUsuario)
                 VALUES
-                (@Nome, @Email, @Senha)";
+                (@Nome, @Email, @Senha, @TipoUsuario)";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
 
                 cmd.Parameters.AddWithValue("@Nome", u.Nome);
                 cmd.Parameters.AddWithValue("@Email", u.Email);
                 cmd.Parameters.AddWithValue("@Senha", u.Senha);
+                cmd.Parameters.AddWithValue("@TipoUsuario", u.TipoUsuario);
 
                 cmd.ExecuteNonQuery();
             }
@@ -510,31 +511,36 @@ namespace WebApplication1.Models
                 conexao.Open();
 
                 string sql = @"
-                SELECT ID, Nome, Email, Senha
+                SELECT ID, Nome, Email, Senha, TipoUsuario
                 FROM Usuarios
-                WHERE Email = @Email
-                AND Senha = @Senha";
+                WHERE Email = @Email";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
 
                 cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@Senha", senha);
 
                 SqlDataReader dr = cmd.ExecuteReader();
 
                 if (dr.Read())
                 {
-                    Usuarios usuario = new Usuarios
+                    string senhaHash = dr["Senha"].ToString();
+
+                    // Verifica se a senha digitada corresponde ao hash
+                    if (BCrypt.Net.BCrypt.Verify(senha, senhaHash))
                     {
-                        Id = Convert.ToInt32(dr["ID"]),
-                        Nome = dr["Nome"].ToString(),
-                        Email = dr["Email"].ToString(),
-                        Senha = dr["Senha"].ToString()
-                    };
+                        Usuarios usuario = new Usuarios
+                        {
+                            Id = Convert.ToInt32(dr["ID"]),
+                            Nome = dr["Nome"].ToString(),
+                            Email = dr["Email"].ToString(),
+                            Senha = senhaHash,
+                            TipoUsuario = dr["TipoUsuario"].ToString()
+                        };
 
-                    dr.Close();
+                        dr.Close();
 
-                    return usuario;
+                        return usuario;
+                    }
                 }
 
                 dr.Close();

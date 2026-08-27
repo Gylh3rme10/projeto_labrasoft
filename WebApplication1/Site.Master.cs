@@ -11,7 +11,12 @@ namespace WebApplication1
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
+            string paginaAtual = System.IO.Path.GetFileName(Request.Path);
 
-		}
+            if (paginaAtual.Equals("Usuario.aspx", StringComparison.OrdinalIgnoreCase))
+            {
+                navbarPrincipal.Visible = false;
+            }
+        }
 	}
 }

@@ -14,5 +14,7 @@ namespace WebApplication1
 
         public string Senha { get; set; }
 
+        public string TipoUsuario { get; set; }
+
     }
 }

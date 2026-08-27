@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using BCrypt.Net;
 using WebApplication1.Models;
 
 namespace WebApplication1
@@ -61,8 +62,24 @@ namespace WebApplication1
         protected void btnCadastro_Click(object sender, EventArgs e)
         {
             string nome = txtNome.Text.Trim();
-            string email = txtEmail.Text.Trim();
+            string email = txtEmail.Text.Trim().ToLower();
             string senha = txtSenha.Text;
+            string tipoUsuario;
+
+            if (!email.Contains("@"))
+            {
+                MostrarMensagemCadastro("Digite um e-mail válido.", false);
+                return;
+            }
+
+            if (email.EndsWith("@labrasoft.com", StringComparison.OrdinalIgnoreCase))
+            {
+                tipoUsuario = "Administrador";
+            }
+            else
+            {
+                tipoUsuario = "Estudante";
+            }
 
             // Validação dos campos
             if (string.IsNullOrWhiteSpace(nome) ||
@@ -83,12 +100,17 @@ namespace WebApplication1
                 return;
             }
 
+            // Gera o hash da senha
+            string senhaHash = BCrypt.Net.BCrypt.HashPassword(senha);
+
+
             // Cria o usuário
             Usuarios usuario = new Usuarios
             {
                 Nome = nome,
                 Email = email,
-                Senha = senha
+                Senha = senhaHash,
+                TipoUsuario = tipoUsuario
             };
 
             // Insere no banco
