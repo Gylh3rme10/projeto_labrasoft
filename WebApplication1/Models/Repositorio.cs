@@ -468,16 +468,15 @@ namespace WebApplication1.Models
 
                 string sql = @"
                 INSERT INTO Usuarios
-                (Nome, Email, Senha, TipoUsuario)
+                (Nome, Email, Senha)
                 VALUES
-                (@Nome, @Email, @Senha, @TipoUsuario)";
+                (@Nome, @Email, @Senha)";
 
                 SqlCommand cmd = new SqlCommand(sql, conexao);
 
                 cmd.Parameters.AddWithValue("@Nome", u.Nome);
                 cmd.Parameters.AddWithValue("@Email", u.Email);
                 cmd.Parameters.AddWithValue("@Senha", u.Senha);
-                cmd.Parameters.AddWithValue("@TipoUsuario", u.TipoUsuario);
 
                 cmd.ExecuteNonQuery();
             }
@@ -511,7 +510,7 @@ namespace WebApplication1.Models
                 conexao.Open();
 
                 string sql = @"
-                SELECT ID, Nome, Email, Senha, TipoUsuario
+                SELECT ID, Nome, Email, Senha
                 FROM Usuarios
                 WHERE Email = @Email";
 
@@ -533,14 +532,13 @@ namespace WebApplication1.Models
                             Id = Convert.ToInt32(dr["ID"]),
                             Nome = dr["Nome"].ToString(),
                             Email = dr["Email"].ToString(),
-                            Senha = senhaHash,
-                            TipoUsuario = dr["TipoUsuario"].ToString()
+                            Senha = senhaHash
                         };
 
                         dr.Close();
 
                         return usuario;
-                    }
+                    } 
                 }
 
                 dr.Close();

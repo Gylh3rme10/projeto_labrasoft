@@ -10,11 +10,23 @@ namespace WebApplication1.Services
     {
         // Chave usada para assinar o JWT
         private readonly string chaveSecreta =
-            "MINHA_CHAVE_SECRETA_MUITO_GRANDE_123456";
+            "LabraSoft_Security_Key_2026_@_Secret_System_v1.0!";
 
         // Gera o token do usuário
-        public string GerarToken(int id, string email, string tipoUsuario)
+        public string GerarToken(int id, string email)
         {
+            //Define a role pelo e-mail
+            string role;
+
+            if (email.EndsWith("@labrasoft.com", StringComparison.OrdinalIgnoreCase))
+            {
+                role = "Admin";
+            }
+            else
+            {
+                role = "Bolsista";
+            }
+
             // Cria a chave de segurança
             var chave = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(chaveSecreta)
@@ -26,7 +38,7 @@ namespace WebApplication1.Services
                 SecurityAlgorithms.HmacSha256
             );
 
-            // Informações armazenadas no JWT
+            // Cria as Claims --- Informações armazenadas no JWT
             var claims = new[]
             {
                 new Claim(
@@ -39,10 +51,9 @@ namespace WebApplication1.Services
                     email
                 ),
 
-                // Define se é Estudante ou Administrador
                 new Claim(
                     ClaimTypes.Role,
-                    tipoUsuario
+                    role
                 )
             };
 
@@ -62,6 +73,42 @@ namespace WebApplication1.Services
             var handler = new JwtSecurityTokenHandler();
 
             return handler.WriteToken(token);
+        }
+
+        public ClaimsPrincipal ValidarToken(string token)
+        {
+            // Cria o handler do JWT
+            var handler = new JwtSecurityTokenHandler();
+
+            //Cria a chave de segurança
+            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSecreta));
+
+            // Configura a validação
+            var parametros = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = chave,
+
+                ValidateIssuer = true,
+                ValidIssuer = "WebApplication1",
+
+                ValidateAudience = true,
+                ValidAudience = "WebApplication1",
+
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            try
+            {
+                //Valida o token e extrai as Claims
+                return handler.ValidateToken(token, parametros, out SecurityToken tokenValidado);
+            }
+            catch
+            {
+                //Token invalido ou expirado
+                return null;
+            }
         }
     }
 }

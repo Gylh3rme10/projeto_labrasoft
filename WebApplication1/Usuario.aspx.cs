@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using BCrypt.Net;
 using WebApplication1.Models;
+using WebApplication1.Services;
 
 namespace WebApplication1
 {
@@ -45,9 +46,23 @@ namespace WebApplication1
             Usuarios usuario = Repositorio.ValidarLogin(email, senha);
 
             if (usuario != null)
-            {
+            {   
+                //cria o serviço de token
+                TokenServices tokenServices = new TokenServices();
+
+                //Gera o JWT --- Id, E-mail e Role
+                string token = tokenServices.GerarToken(usuario.Id, usuario.Email);
+
                 // Guarda o usuário logado na sessão
                 Session["Usuario"] = usuario;
+
+                // Guarda o JWT em um cookie
+                HttpCookie cookie = new HttpCookie("TokenJWT", token);
+                cookie.HttpOnly = true;
+                cookie.Secure = Request.IsSecureConnection;
+
+                //adiciona cookie à resposta
+                Response.Cookies.Add(cookie);
 
                 // Redireciona para a página principal
                 Response.Redirect("CadastroProjeto.aspx");
@@ -64,23 +79,7 @@ namespace WebApplication1
             string nome = txtNome.Text.Trim();
             string email = txtEmail.Text.Trim().ToLower();
             string senha = txtSenha.Text;
-            string tipoUsuario;
-
-            if (!email.Contains("@"))
-            {
-                MostrarMensagemCadastro("Digite um e-mail válido.", false);
-                return;
-            }
-
-            if (email.EndsWith("@labrasoft.com", StringComparison.OrdinalIgnoreCase))
-            {
-                tipoUsuario = "Administrador";
-            }
-            else
-            {
-                tipoUsuario = "Estudante";
-            }
-
+            
             // Validação dos campos
             if (string.IsNullOrWhiteSpace(nome) ||
                 string.IsNullOrWhiteSpace(email) ||
@@ -110,7 +109,6 @@ namespace WebApplication1
                 Nome = nome,
                 Email = email,
                 Senha = senhaHash,
-                TipoUsuario = tipoUsuario
             };
 
             // Insere no banco
