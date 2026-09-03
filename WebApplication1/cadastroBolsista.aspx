@@ -16,7 +16,7 @@
 
                     <div class="card-body">
 
-                        <!-- Primeira linha -->
+         <!-- Primeira linha -->
                         <div class="row">
                             <div class="col-md-8 mb-3">
                                 <label class="form-label">Nome Completo:</label>
@@ -35,7 +35,7 @@
                             </div>
                         </div>
 
-                        <!-- Segunda linha -->
+            <!-- Segunda linha -->
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Matrícula:</label>
@@ -66,7 +66,7 @@
 
                         <hr />
 
-                        <!-- Botões -->
+            <!-- Botões -->
                         <div class="row mt-3">
                             <div class="col-md-9 d-grid">
                                 <asp:Button ID="BtnSalvar"
@@ -94,7 +94,7 @@
 
                         <hr />
 
-                        <!-- Lista -->
+            <!-- Lista -->
                         <div class="mt-4">
                             <h3 class="text-secondary">Lista de Bolsistas Cadastrados</h3>
                             <div class="mt-3">
@@ -133,19 +133,16 @@
                                     CssClass="text-success">
                                 </asp:Label>
                                 <hr />
+               <!--Gridview-->
                                 <asp:GridView ID="gvBolsistas"
                                     runat="server"
                                     AutoGenerateColumns="false"
                                     CssClass="table table-bordered table-striped table-hover">
 
                                     <Columns>
+                                        <asp:BoundField DataField="ID" HeaderText="Id" />
                                         <asp:BoundField DataField="Nome" HeaderText="Nome" />
-                                        <asp:BoundField DataField="CPF" HeaderText="CPF" />
                                         <asp:BoundField DataField="Matricula" HeaderText="Matrícula" />
-                                        <asp:BoundField DataField="DataNascimento"
-                                            HeaderText="Data de Nascimento"
-                                            DataFormatString="{0:dd/MM/yyyy}" />
-                                        <asp:BoundField DataField="Sexo" HeaderText="Sexo" />
                                     </Columns>
 
                                 </asp:GridView>

@@ -41,18 +41,15 @@ namespace WebApplication1.Services
             // Cria as Claims --- Informações armazenadas no JWT
             var claims = new[]
             {
-                new Claim(
-                    ClaimTypes.NameIdentifier,
+                new Claim("UserID",
                     id.ToString()
                 ),
 
-                new Claim(
-                    ClaimTypes.Email,
+                new Claim("Email",
                     email
                 ),
 
-                new Claim(
-                    ClaimTypes.Role,
+                new Claim(ClaimTypes.Role,
                     role
                 )
             };

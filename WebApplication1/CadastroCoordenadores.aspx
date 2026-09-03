@@ -131,15 +131,16 @@
                                             OnClick="MostrarTodos" 
                                             Visible = "false"/>
                                 </div>
+                                <!--GRIDVIEW-->
                                 <asp:GridView ID="gvCoordenadores"
                                     runat="server"
                                     AutoGenerateColumns="false"
                                     CssClass="table table-bordered table-striped table-hover">
 
                                     <Columns>
+                                        <asp:BoundField DataField="Id" HeaderText="Id" />
                                         <asp:BoundField DataField="Nome" HeaderText="Nome" />
                                         <asp:BoundField DataField="Email" HeaderText="Email" />
-                                        <asp:BoundField DataField="AreaAtuacao" HeaderText="Area de atuação" />
                                         <asp:BoundField DataField="Titulacao" HeaderText="Titulacão" />
                                     </Columns>
 

@@ -70,9 +70,13 @@ namespace WebApplication1
         }
         private void AtualizarGrid()
         {
-            if (Repositorio.ListarCoordenadores().Count > 0)
+            CoordenadoresRepository repository = new CoordenadoresRepository();
+
+            List<CoordenadorGridDTO> coordendadores = repository.ListarCoordenadoresGrid();
+
+            if (coordendadores.Count > 0)
             {
-                gvCoordenadores.DataSource = Repositorio.ListarCoordenadores();
+                gvCoordenadores.DataSource = coordendadores;
                 gvCoordenadores.DataBind();
                 gvCoordenadores.Visible = true;
 

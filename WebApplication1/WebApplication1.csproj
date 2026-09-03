@@ -114,6 +114,7 @@
     <Content Include="Web\Formulario.html" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Repositórios\BaseRepository.cs" />
     <Compile Include="BolsistaExemplo.aspx.cs">
       <DependentUpon>BolsistaExemplo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -121,6 +122,8 @@
     <Compile Include="BolsistaExemplo.aspx.designer.cs">
       <DependentUpon>BolsistaExemplo.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Repositórios\BolsistasRepository.cs" />
+    <Compile Include="DTOs\BolsistaGridDTO.cs" />
     <Compile Include="cadastroBolsista.aspx.cs">
       <DependentUpon>cadastroBolsista.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -149,12 +152,14 @@
     <Compile Include="CadastroProjeto.aspx.designer.cs">
       <DependentUpon>CadastroProjeto.aspx</DependentUpon>
     </Compile>
+    <Compile Include="DTOs\CoordenadorGridDTO.cs" />
     <Compile Include="Models\Despesas.cs" />
     <Compile Include="Models\Coordenadores.cs" />
     <Compile Include="Models\Bolsista.cs" />
     <Compile Include="Models\Projeto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Repositorio.cs" />
+    <Compile Include="Repositórios\CoordenadoresRepository.cs" />
     <Compile Include="Services\GmailService.cs" />
     <Compile Include="Services\TokenServices.cs" />
     <Compile Include="Site.Master.cs">

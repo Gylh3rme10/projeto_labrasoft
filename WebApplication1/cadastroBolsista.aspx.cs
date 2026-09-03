@@ -63,9 +63,13 @@ namespace WebApplication1
         }
         private void AtualizarGrid()
         {
-            if (Repositorio.ListarBolsistas().Count > 0)
+            BolsistasRepository repository = new BolsistasRepository();
+
+            List<BolsistaGridDTO> bolsistas = repository.ListarBolsistasGrid();
+
+            if (bolsistas.Count > 0)
             {
-                gvBolsistas.DataSource = Repositorio.ListarBolsistas();
+                gvBolsistas.DataSource = bolsistas;
                 gvBolsistas.DataBind();
                 gvBolsistas.Visible = true;
                 BtnFiltrarMulheres.Visible = true;
