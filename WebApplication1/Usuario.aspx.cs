@@ -65,7 +65,7 @@ namespace WebApplication1
                 Response.Cookies.Add(cookie);
 
                 // Redireciona para a página principal
-                Response.Redirect("CadastroProjeto.aspx");
+                Response.Redirect("CadastroBolsista.aspx");
             }
             else
             {

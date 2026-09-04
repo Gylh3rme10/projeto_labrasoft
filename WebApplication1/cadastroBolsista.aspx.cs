@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Services.Description;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebApplication1.Models;
@@ -19,48 +20,50 @@ namespace WebApplication1
         }
         protected void BtnSalvar_Click(object sender, EventArgs e)
         {
-
-            if (string.IsNullOrWhiteSpace(txtNome.Text) || 
-                string.IsNullOrWhiteSpace(txtCpf.Text) || 
-                string.IsNullOrWhiteSpace(dateBirth.Text) || 
-                string.IsNullOrWhiteSpace(txtMatricula.Text) || 
-                ddlSexo.SelectedIndex <= 0
-                )
-            {
-                lblMensagem.Text = "Há campos não preenchidos.";
-                lblMensagem.ForeColor = System.Drawing.Color.Red;
-                return;
-            }
-
             try
             {
-                Bolsista novoAluno = new Bolsista();
+                if (!DateTime.TryParse(dateBirth.Text, out DateTime dataNascimento))
+                {
+                    MostrarMensagem("Digite uma data de nascimento válida.", false);
+                    return;
+                }
 
-                novoAluno.Nome = txtNome.Text;
-                novoAluno.CPF = txtCpf.Text;
-                novoAluno.DataNascimento = DateTime.Parse(dateBirth.Text);
-                novoAluno.Matricula = txtMatricula.Text;
-                novoAluno.Sexo = ddlSexo.SelectedValue;
+                Bolsista Aluno = new Bolsista();
 
-                string resumo = novoAluno.ObterResumo();
-                int idadeAluno = novoAluno.CalcularIdade();
+                Aluno.Nome = txtNome.Text.Trim();
+                Aluno.CPF = txtCpf.Text.Trim();
+                Aluno.DataNascimento = DateTime.Parse(dateBirth.Text);
+                Aluno.Matricula = txtMatricula.Text.Trim();
+                Aluno.Sexo = ddlSexo.SelectedValue;
 
-                Repositorio.InserirBolsista(novoAluno);
+                BolsistaService service = new BolsistaService();
 
-                Response.Redirect("CadastroBolsista.aspx");
+                service.CadastrarBolsista(Aluno);
 
-                lblMensagem.Text = $"Cadastro concluído: {resumo}";
-                lblMensagem.ForeColor = System.Drawing.Color.Green;
+                MostrarMensagem("Bolsista cadastrado com sucesso!", true);
+
+                //Response.Redirect("CadastroBolsista.aspx");
 
                 AtualizarGrid();
-
-            } catch (Exception) 
+            }
+            catch (Exception ex) 
             {
-                lblMensagem.Text = "Cadastro falhou";
-                lblMensagem.ForeColor = System.Drawing.Color.Red;
-                Response.Redirect("CadastroBolsista.aspx");
+                MostrarMensagem(ex.Message, false);
+
+                //Response.Redirect("CadastroBolsista.aspx");
             }
         }
+        private void MostrarMensagem(string mensagem, bool sucesso)
+        {
+            lblMensagem.Text = mensagem;
+            lblMensagem.Visible = true;
+
+            if (sucesso)
+                lblMensagem.CssClass = "alert alert-success d-block";
+            else
+                lblMensagem.CssClass = "alert alert-danger d-block";
+        }
+
         private void AtualizarGrid()
         {
             BolsistasRepository repository = new BolsistasRepository();
@@ -90,9 +93,8 @@ namespace WebApplication1
             txtMatricula.Text = "";
             dateBirth.Text = "";
             ddlSexo.SelectedIndex = 0;
-
-            lblMensagem.Text = "";
-            lblMensagem.CssClass = "";
+            MostrarMensagem("", false);
+            lblMensagem.Visible = false;
         }
         protected void BtnLimpar_Click(object sender, EventArgs e) 
         {

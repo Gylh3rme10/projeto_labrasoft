@@ -7,11 +7,9 @@ using WebApplication1.Models;
 
 namespace WebApplication1
 {
-    public class BolsistasRepository : BaseRepository 
+    //CADASTRO DOS BOLSISTAS
+    public class BolsistasRepository : BaseRepository
     {
-
-        //CADASTRO DOS BOLSISTAS
-
         //INSERIR BOLSISTA NO BANCO
         public void InserirBolsista(Bolsista b)
         {
@@ -99,7 +97,7 @@ namespace WebApplication1
             return lista;
         }
         //VERIFICAR SE BOLSISTA ESTÁ CADASTRADO
-        public bool BolsistaExiste(string cpf)
+        public bool BolsistaJaCadastrado(string cpf)
         {
             using (SqlConnection conexao = new SqlConnection(strConexao))
             {
@@ -120,7 +118,7 @@ namespace WebApplication1
         {
             foreach (Bolsista b in ListarBolsistas())
             {
-                if (!BolsistaExiste(b.CPF))
+                if (!BolsistaJaCadastrado(b.CPF))
                 {
                     InserirBolsista(b);
                 }

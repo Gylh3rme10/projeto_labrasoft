@@ -114,6 +114,8 @@
     <Content Include="Web\Formulario.html" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\CoordenadorService.cs" />
+    <Compile Include="Services\BolsistaService.cs" />
     <Compile Include="Repositórios\BaseRepository.cs" />
     <Compile Include="BolsistaExemplo.aspx.cs">
       <DependentUpon>BolsistaExemplo.aspx</DependentUpon>

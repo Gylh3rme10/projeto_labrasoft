@@ -64,6 +64,13 @@
                             </div>
                         </div>
 
+                        <div class="mt-3">
+                            <asp:Label 
+                                ID="lblMensagem"
+                                runat="server" 
+                                Visible="false"
+                                Class = "h6">
+                            </asp:Label> </div>
                         <hr />
 
             <!-- Botões -->
@@ -83,13 +90,6 @@
                                     CssClass="btn btn-secondary"
                                     OnClick="BtnLimpar_Click" />
                             </div>
-                        </div>
-
-                        <div class="mt-3">
-                            <asp:Label ID="lblMensagem"
-                                runat="server"
-                                CssClass="h6">
-                            </asp:Label>
                         </div>
 
                         <hr />

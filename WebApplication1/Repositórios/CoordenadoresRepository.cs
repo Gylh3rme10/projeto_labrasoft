@@ -7,10 +7,9 @@ using WebApplication1.Models;
 
 namespace WebApplication1
 {
+    // CADASTRO DOS COORDENADORES
     public class CoordenadoresRepository : BaseRepository
     {
-        // CADASTRO DOS COORDENADORES
-
         // INSERE COORDENADOR NO BANCO
         public void InserirCoordenador(Coordenador c)
         {
@@ -99,7 +98,7 @@ namespace WebApplication1
             return lista;
         }
         //VERIFICAR SE COORDENADOR ESTÁ CADASTRADO
-        public bool CoordenadorExiste(string cpf)
+        public bool CoordenadorJaCadastrado(string cpf)
         {
             using (SqlConnection conexao = new SqlConnection(strConexao))
             {
